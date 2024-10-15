@@ -1,24 +1,55 @@
 import './style.css'
-import javascriptLogo from './javascript.svg'
-import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.js'
 
-document.querySelector('#app').innerHTML = `
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank">
-      <img src="${javascriptLogo}" class="logo vanilla" alt="JavaScript logo" />
-    </a>
-    <h1>Hello Vite!</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite logo to learn more
-    </p>
-  </div>
-`
 
-setupCounter(document.querySelector('#counter'))
+// document.querySelector('#app').innerHTML = `
+
+// `
+
+
+const svgs = [
+'url(public/assets/Vector.svg)', // Path to Vector.svg
+      'url(public/assets/Vector2.svg)' // Path to Vector2.svg
+];
+
+document.querySelectorAll('.child').forEach(child => {
+  const randomSvg = svgs[Math.floor(Math.random() * svgs.length)];
+  child.style.backgroundImage = randomSvg;
+});
+
+const input = document.getElementById('text-input');
+      const catImage = document.getElementById('cat-image');
+
+      input.addEventListener('input', () => {
+        if (input.value.toLowerCase().includes('fish')) {
+          catImage.src = 'public/assets/cat-openMouth.png';
+          animateCat();
+          animateTextRemoval();
+        } else {
+          catImage.src = 'public/assets/cat-closedMouth.png';
+        }
+      });
+      function animateCat() {
+        anime({
+          targets: '#cat-image',
+          translateX: ['-10%', '200%'],
+          duration: 500,
+          easing: 'linear',
+          direction: 'alternate',
+          complete: () => {
+            catImage.src = 'public/assets/cat-closedMouth.png';
+          }
+        });
+      }
+      function animateTextRemoval() {
+        anime({
+          targets: input,
+          opacity: [1, 0],
+          duration: 500,
+          easing: 'easeOutQuad',
+          complete: () => {
+            input.value = '';
+            input.style.opacity = 1; // Reset opacity after clearing the input
+          }
+        });
+      }
+      
