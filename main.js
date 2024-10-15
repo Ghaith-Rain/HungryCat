@@ -1,55 +1,108 @@
 import './style.css'
 
 
-// document.querySelector('#app').innerHTML = `
+// Observer interface
+class Observer {
+  update(data) {}
+}
 
-// `
+// Subject interface
+class Subject {
+  constructor() {
+    this.observers = [];
+  }
 
+  addObserver(observer) {
+    this.observers.push(observer);
+  }
 
-const svgs = [
-'url(public/assets/Vector.svg)', // Path to Vector.svg
-      'url(public/assets/Vector2.svg)' // Path to Vector2.svg
-];
+  removeObserver(observer) {
+    this.observers = this.observers.filter(obs => obs !== observer);
+  }
 
-document.querySelectorAll('.child').forEach(child => {
-  const randomSvg = svgs[Math.floor(Math.random() * svgs.length)];
-  child.style.backgroundImage = randomSvg;
+  notifyObservers(data) {
+    this.observers.forEach(observer => observer.update(data));
+  }
+}
+
+// Concrete Subject: TextInput
+class TextInput extends Subject {
+  constructor(inputElement) {
+    super();
+    this.inputElement = inputElement;
+    this.inputElement.addEventListener('input', () => this.notifyObservers(this.inputElement.value));
+  }
+}
+
+// Concrete Observer: Cat
+class Cat extends Observer {
+  constructor(catImageElement) {
+    super();
+    this.catImage = catImageElement;
+  }
+
+  update(text) {
+    if (text.toLowerCase().includes('fish')) {
+      this.eatFish();
+    } else {
+      this.resetCat();
+    }
+  }
+
+  eatFish() {
+    this.catImage.src = 'public/assets/cat-openMouth.png';
+    this.animateCat();
+    this.animateTextRemoval();
+  }
+
+  resetCat() {
+    this.catImage.src = 'public/assets/cat-closedMouth.png';
+  }
+
+  animateCat() {
+    anime({
+      targets: this.catImage,
+      translateX: ['-10%', '200%'],
+      duration: 500,
+      easing: 'linear',
+      direction: 'alternate',
+      complete: () => this.resetCat()
+    });
+  }
+
+  animateTextRemoval() {
+    const input = document.getElementById('text-input');
+    anime({
+      targets: input,
+      opacity: [1, 0],
+      duration: 500,
+      easing: 'easeOutQuad',
+      complete: () => {
+        input.value = '';
+        input.style.opacity = 1;
+      }
+    });
+  }
+}
+
+// Usage
+document.addEventListener('DOMContentLoaded', () => {
+  const inputElement = document.getElementById('text-input');
+  const catImageElement = document.getElementById('cat-image');
+
+  const textInput = new TextInput(inputElement);
+  const cat = new Cat(catImageElement);
+
+  textInput.addObserver(cat);
+
+  // SVG background setup (unrelated to Observer pattern)
+  const svgs = [
+    'url(public/assets/Vector.svg)',
+    'url(public/assets/Vector2.svg)'
+  ];
+
+  document.querySelectorAll('.child').forEach(child => {
+    const randomSvg = svgs[Math.floor(Math.random() * svgs.length)];
+    child.style.backgroundImage = randomSvg;
+  });
 });
-
-const input = document.getElementById('text-input');
-      const catImage = document.getElementById('cat-image');
-
-      input.addEventListener('input', () => {
-        if (input.value.toLowerCase().includes('fish')) {
-          catImage.src = 'public/assets/cat-openMouth.png';
-          animateCat();
-          animateTextRemoval();
-        } else {
-          catImage.src = 'public/assets/cat-closedMouth.png';
-        }
-      });
-      function animateCat() {
-        anime({
-          targets: '#cat-image',
-          translateX: ['-10%', '200%'],
-          duration: 500,
-          easing: 'linear',
-          direction: 'alternate',
-          complete: () => {
-            catImage.src = 'public/assets/cat-closedMouth.png';
-          }
-        });
-      }
-      function animateTextRemoval() {
-        anime({
-          targets: input,
-          opacity: [1, 0],
-          duration: 500,
-          easing: 'easeOutQuad',
-          complete: () => {
-            input.value = '';
-            input.style.opacity = 1; // Reset opacity after clearing the input
-          }
-        });
-      }
-      
