@@ -50,13 +50,13 @@ class Cat extends Observer {
   }
 
   eatFish() {
-    this.catImage.src = 'public/assets/cat-openMouth.png';
+    this.catImage.src = 'assets/cat-openMouth.png';
     this.animateCat();
     this.animateTextRemoval();
   }
 
   resetCat() {
-    this.catImage.src = 'public/assets/cat-closedMouth.png';
+    this.catImage.src = 'assets/cat-closedMouth.png';
   }
 
   animateCat() {
@@ -97,8 +97,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // SVG background setup (unrelated to Observer pattern)
   const svgs = [
-    'url(public/assets/Vector.svg)',
-    'url(public/assets/Vector2.svg)'
+    'url(assets/Vector.svg)',
+    'url(assets/Vector2.svg)'
   ];
 
   document.querySelectorAll('.child').forEach(child => {
